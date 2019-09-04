@@ -230,6 +230,18 @@ x        │ y       │ z
 
 The underscore (`_`) in both of the above code examples is a shortcut provided by Query.jl and only works inside the provided query functions -- it is a shorthand anonymous function. For instance, `_.x` gets translated to `_ -> _.x`
 
+Also notice that the results are "query results" instead of data frames. Just as every function takes in an iterator, it also returns an iterator. Use `collect` to collect the results into an array, or `DataFrame` to return a data frame:
+
+```
+julia> rand(10) |> @map((x = _, y = _ * 2)) |> @filter(_.x > .7) |> DataFrame
+2×2 DataFrame
+│ Row │ x        │ y       │
+│     │ Float64  │ Float64 │
+├─────┼──────────┼─────────┤
+│ 1   │ 0.861846 │ 1.72369 │
+│ 2   │ 0.90432  │ 1.80864 │
+```
+
 ## Macros
 
 [Macros](https://docs.julialang.org/en/v1/manual/metaprogramming/#man-macros-1) "provide a method to include generated code in the final body of a program." So far, I've noticed they're used routinely in Julia code to provide useful features, such as the underscore expansion in the Query.jl examples above.
