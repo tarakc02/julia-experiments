@@ -12,7 +12,7 @@ all: index.html
 clean: 
 		-rm index.html
 
-index.html: index.md
+index.html: README.md
 	pandoc $< -o $@ \
 		--css=/Users/tshah/.email-stylesheet.css \
 		--standalone \
