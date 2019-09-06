@@ -1,6 +1,6 @@
 ## Background/introduction
 
-I'd like to implement a Set data structure using a red-black binary tree. It should support the following methods efficiently:
+I'd like to implement a set-like data structure using a red-black binary tree. It should support the following methods efficiently:
 
 - `insert(set, element)` returns a new set, which contains all elements of `set`, plus the new `element`. However, it should not modify `set`.
 - `contains` returns `true` or `false` based on whether an element is present in the set
@@ -26,9 +26,9 @@ function array2tree(x::Array{T, 1}) where {T}
 end
 ```
 
-To demonstrate the persistence, compare what happens when I insert into a tree vs. when I try to insert into a `Set`:
+To demonstrate the persistence, compare what happens when I insert into a tree-based set vs. when I try to insert into a `Base.Set`:
 
-```
+```julia
 julia> test = [x for x in 1:10]
 10-element Array{Int64,1}:
   1
@@ -188,7 +188,7 @@ BenchmarkTools.Trial:
 
 And for inserts (same test). Here I'm interested in the amount of memory used for each insert, which again should grow logarithmically.
 
-```
+```julia
 julia> @benchmark insert(tree1, 9192346102151525322)
 BenchmarkTools.Trial:
   memory estimate:  512 bytes
