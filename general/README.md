@@ -148,6 +148,8 @@ julia> mtcars = CSV.read("mtcars.csv", delim = "|")
 │ 32  │ 21.4    │ 4     │ 121.0   │ 109   │ 4.11    │ 2.78    │ 18.6    │ 1     │
 ```
 
+The [Feather.jl](https://github.com/JuliaData/Feather.jl) package provides the ability to read and write feather files.
+
 ## Working with tabular data
 
 The `DataFrames` package provides a `DataFrame` along with the usual methods to index, etc:
