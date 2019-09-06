@@ -2,7 +2,7 @@
 
 Functions work basically the way you think they would:
 
-```
+```julia
 julia> function add(x, y)
            return x + y
        end
@@ -14,7 +14,7 @@ julia> add(1, 2)
 
 The return value of a function is the value of the last evaluated expression in the function, so you could just do:
 
-```
+```julia
 function add(x, y)
     x + y
 end
@@ -22,7 +22,7 @@ end
 
 There's a compact form for short function definitions:
 
-```
+```julia
 julia> add(x, y) = x + y
 add (generic function with 1 method)
 
@@ -32,7 +32,7 @@ julia> add(1, 2)
 
 Note that the longer form doesn't use curly brackets. This is also true more generally -- blocks of code are encapsulated in `begin` and `end` instead of brackets. For things like functions, loops, and conditionals, the keyword does the same job as `begin`. Also you don't have to use a lot of parentheses that you'd find in other languages:
 
-```
+```julia
 f = function(x)
     if x < 5
         print("abcd\n")
@@ -51,7 +51,7 @@ end
 
 Functions can be composed (notice evaluation is from right to left, as in mathematics):
 
-```
+```julia
 f(x) = 2x
 g(x) = x + 7
 h = f ∘ g
@@ -62,7 +62,7 @@ julia> h(1)
 
 You can make anonymous functions:
 
-```
+```julia
 # this
 x -> 2x + 7
 
@@ -83,7 +83,7 @@ julia> map(x -> 2x + 8, [1, 2, 3])
 
 You can pipe functions together using the `|>` operator:
 
-```
+```julia
 julia> rand(10) |> sum |> round
 5.0
 ```
@@ -92,28 +92,28 @@ julia> rand(10) |> sum |> round
 
 To use a package, either:
 
-```
+```julia
 import PkgName
 PkgName.pkgfunction(...)
 ```
 
 or to bring stuff into your namespace:
 
-```
+```julia
 using PkgName
 pkgfunction(...)
 ```
 
 or:
 
-```
+```julia
 import PkgName.pkgfunction
 pkgfunction(...)
 ```
 
 or:
 
-```
+```julia
 import PkgName: func1, func2
 func1(...)
 func2(...)
@@ -121,7 +121,7 @@ func2(...)
 
 To install a package:
 
-```
+```julia
 import Pkg
 Pkg.add("PkgName")
 ```
@@ -130,7 +130,7 @@ Pkg.add("PkgName")
 
 Use the `CSV` package to import delimited data as a `DataFrame`:
 
-```
+```julia
 julia> import CSV
 
 julia> mtcars = CSV.read("mtcars.csv", delim = "|")
@@ -154,7 +154,7 @@ The [Feather.jl](https://github.com/JuliaData/Feather.jl) package provides the a
 
 The `DataFrames` package provides a `DataFrame` along with the usual methods to index, etc:
 
-```
+```julia
 julia> using DataFrames
 
 julia> mtcars[1:10, 2:3]
@@ -177,7 +177,7 @@ julia> mtcars[1:10, 2:3]
 
 [Query.jl](https://github.com/queryverse/Query.jl) looks like a useful package, is based on LINQ and provides a set of `dplyr`-like tools for manipulating stuff:
 
-```
+```julia
 julia> using Query
 
 julia> mtcars |> @filter(_.mpg <= 20)
@@ -200,7 +200,7 @@ mpg  │ cyl │ disp  │ hp  │ drat │ wt    │ qsec  │ vs │ am │ ge
 
 Intriguingly, Query.jl is very general -- the functions it provides operate on any iterator (!). The reason it works well with `DataFrames` is that it reads them as iterators of named tuples. But:
 
-```
+```julia
 # note that rand returns an array:
 julia> rand(5)
 5-element Array{Float64,1}:
@@ -234,7 +234,7 @@ The underscore (`_`) in both of the above code examples is a shortcut provided b
 
 Also notice that the results are "query results" instead of data frames. Just as every function takes in an iterator, it also returns an iterator. Use `collect` to collect the results into an array, or `DataFrame` to return a data frame:
 
-```
+```julia
 julia> rand(10) |> @map((x = _, y = _ * 2)) |> @filter(_.x > .7) |> DataFrame
 2×2 DataFrame
 │ Row │ x        │ y       │
@@ -258,7 +258,7 @@ julia> rand(10) |> @map((x = _, y = _ * 2)) |> @filter(_.x > .7) |> DataFrame
 
 Python-ish generators/comprehensions:
 
-```
+```julia
 julia> [2x for x in 1:5]
 5-element Array{Int64,1}:
   2
