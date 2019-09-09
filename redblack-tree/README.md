@@ -209,64 +209,63 @@ BenchmarkTools.Trial:
   memory estimate:  512 bytes
   allocs estimate:  21
   --------------
-  minimum time:     678.977 ns (0.00% GC)
-  median time:      751.395 ns (0.00% GC)
-  mean time:        1.193 μs (34.91% GC)
-  maximum time:     177.399 μs (99.51% GC)
+  minimum time:     305.781 ns (0.00% GC)
+  median time:      339.191 ns (0.00% GC)
+  mean time:        512.436 ns (31.31% GC)
+  maximum time:     44.785 μs (99.22% GC)
   --------------
   samples:          10000
-  evals/sample:     133
+  evals/sample:     251
 
 julia> @benchmark insert(tree2, 9192346102151525322)
 BenchmarkTools.Trial:
-  memory estimate:  960 bytes
-  allocs estimate:  39
+  memory estimate:  656 bytes
+  allocs estimate:  27
   --------------
-  minimum time:     1.220 μs (0.00% GC)
-  median time:      1.506 μs (0.00% GC)
-  mean time:        2.273 μs (32.33% GC)
-  maximum time:     1.919 ms (99.90% GC)
+  minimum time:     381.468 ns (0.00% GC)
+  median time:      414.426 ns (0.00% GC)
+  mean time:        628.531 ns (31.23% GC)
+  maximum time:     49.735 μs (98.73% GC)
   --------------
   samples:          10000
-  evals/sample:     10
+  evals/sample:     203
 
 julia> @benchmark insert(tree3, 9192346102151525322)
 BenchmarkTools.Trial:
   memory estimate:  944 bytes
   allocs estimate:  39
   --------------
-  minimum time:     1.286 μs (0.00% GC)
-  median time:      1.636 μs (0.00% GC)
-  mean time:        2.396 μs (30.13% GC)
-  maximum time:     1.909 ms (99.86% GC)
+  minimum time:     698.434 ns (0.00% GC)
+  median time:      769.654 ns (0.00% GC)
+  mean time:        1.055 μs (25.89% GC)
+  maximum time:     61.671 μs (98.23% GC)
   --------------
   samples:          10000
-  evals/sample:     10
+  evals/sample:     143
 
 julia> @benchmark insert(tree4, 9192346102151525322)
 BenchmarkTools.Trial:
-  memory estimate:  992 bytes
-  allocs estimate:  41
+  memory estimate:  1.03 KiB
+  allocs estimate:  43
   --------------
-  minimum time:     1.204 μs (0.00% GC)
-  median time:      1.527 μs (0.00% GC)
-  mean time:        2.276 μs (31.09% GC)
-  maximum time:     1.882 ms (99.90% GC)
+  minimum time:     743.902 ns (0.00% GC)
+  median time:      824.320 ns (0.00% GC)
+  mean time:        1.150 μs (26.89% GC)
+  maximum time:     74.639 μs (98.42% GC)
   --------------
   samples:          10000
-  evals/sample:     10
+  evals/sample:     122
 
 julia> @benchmark insert(tree5, 9192346102151525322)
 BenchmarkTools.Trial:
-  memory estimate:  1.20 KiB
-  allocs estimate:  51
+  memory estimate:  1.11 KiB
+  allocs estimate:  47
   --------------
-  minimum time:     1.508 μs (0.00% GC)
-  median time:      1.819 μs (0.00% GC)
-  mean time:        2.751 μs (32.17% GC)
-  maximum time:     1.904 ms (99.88% GC)
+  minimum time:     880.977 ns (0.00% GC)
+  median time:      961.568 ns (0.00% GC)
+  mean time:        1.317 μs (23.95% GC)
+  maximum time:     194.019 μs (99.22% GC)
   --------------
   samples:          10000
-  evals/sample:     10
+  evals/sample:     44
 ```
-
