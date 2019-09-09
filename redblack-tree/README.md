@@ -98,6 +98,21 @@ julia> [element for element in between(demo_tree, 25, 100)]
  87
  96
 ```
+## Tests
+
+```julia
+julia> include("tests.jl")
+Test Summary:   | Pass  Total
+insert elements |   17     17
+Test Summary:   | Pass  Total
+range operators |    2      2
+Test Summary:     | Pass  Total
+maintain ordering |    3      3
+Test Summary:          | Pass  Total
+maintain black balance |    3      3
+Test Summary:         | Pass  Total
+no red-red violations |    3      3
+```
 
 ## Some benchmarking
 

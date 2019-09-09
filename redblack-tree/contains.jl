@@ -2,6 +2,5 @@ contains(::E{T}, ::T) where {T} = false
 function contains(tree::RB{T}, key::T) where {T}
     key <  tree.key && return contains(tree.left, key)
     key >  tree.key && return contains(tree.right, key)
-    key == tree.key && return true
-    return false
+    return true
 end
