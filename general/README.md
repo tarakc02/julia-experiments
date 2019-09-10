@@ -88,6 +88,46 @@ julia> rand(10) |> sum |> round
 5.0
 ```
 
+## Compilation and waiting
+
+Julia compiles individual methods when you first run them (within a given session). For that reason, there is compilation overhead to calling a method for the first time
+
+```julia
+julia> add(x, y) = x + y
+add (generic function with 1 method)
+
+# compiles for {Int, Int}
+julia> @time add(5, 7)
+  0.002389 seconds (766 allocations: 45.095 KiB)
+12
+
+# already compiled, so no more compilation overhead
+julia> @time add(19, 25)
+  0.000002 seconds (4 allocations: 160 bytes)
+44
+
+# but we haven't compiled a method for {Float64, Float64}
+julia> @time add(5.0, 7.0)
+  0.002551 seconds (758 allocations: 44.706 KiB)
+12.0
+
+# now it's compiled
+julia> @time add(19.0, 25.0)
+  0.000002 seconds (5 allocations: 176 bytes)
+44.0
+
+# notice that signature {Int, Float64} is its own method
+# dispatch is on both arguments
+julia> @time add(5, 7.0)
+  0.002931 seconds (2.13 k allocations: 119.521 KiB)
+12.0
+
+julia> @time add(5, 7.0)
+  0.000002 seconds (5 allocations: 176 bytes)
+12.0
+
+```
+
 ## Packages
 
 To use a package, either:
