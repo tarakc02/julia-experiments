@@ -6,6 +6,7 @@ I'd like to implement a set-like data structure using a red-black binary tree. I
 - `contains` returns `true` or `false` based on whether an element is present in the set
 - `minimum` and `maximum` return the minimum and maximum element
 - `between` returns an iterator of elements between a low and high value (in ascending order)
+- 'delete_min` returns the new set resulting from removing the smallest element, again without modifying the original set
 
 The constraint that I can't modify the set during `insert`s means I'll have a persistent data structure. But to still be efficient, I can't just be making deep copies of a set every time I want to insert a new element.
 
@@ -98,12 +99,25 @@ julia> [element for element in between(demo_tree, 25, 100)]
  87
  96
 ```
+
+Deletion
+
+```julia
+julia> d2 = delete_min(demo_tree);
+
+julia> contains(demo_tree, -86)
+true
+
+julia> contains(d2, -86)
+false
+```
+
 ## Tests
 
 ```julia
 julia> include("tests.jl")
 Test Summary:   | Pass  Total
-insert elements |   17     17
+insert elements |   23     23
 Test Summary:   | Pass  Total
 range operators |    2      2
 Test Summary:     | Pass  Total
@@ -112,6 +126,8 @@ Test Summary:          | Pass  Total
 maintain black balance |    3      3
 Test Summary:         | Pass  Total
 no red-red violations |    3      3
+Test Summary:                   | Pass  Total
+delete-min preserves invariants | 5985   5985
 ```
 
 ## Some benchmarking
@@ -268,4 +284,73 @@ BenchmarkTools.Trial:
   --------------
   samples:          10000
   evals/sample:     44
+```
+
+Finally for deleting the min:
+
+```julia
+julia> @benchmark delete_min(tree1)
+BenchmarkTools.Trial:
+  memory estimate:  928 bytes
+  allocs estimate:  36
+  --------------
+  minimum time:     1.402 μs (0.00% GC)
+  median time:      1.686 μs (0.00% GC)
+  mean time:        2.198 μs (17.66% GC)
+  maximum time:     1.105 ms (99.80% GC)
+  --------------
+  samples:          10000
+  evals/sample:     10
+
+julia> @benchmark delete_min(tree2)
+BenchmarkTools.Trial:
+  memory estimate:  1.08 KiB
+  allocs estimate:  44
+  --------------
+  minimum time:     1.724 μs (0.00% GC)
+  median time:      2.075 μs (0.00% GC)
+  mean time:        2.609 μs (14.86% GC)
+  maximum time:     1.088 ms (99.70% GC)
+  --------------
+  samples:          10000
+  evals/sample:     10
+
+julia> @benchmark delete_min(tree3)
+BenchmarkTools.Trial:
+  memory estimate:  1.28 KiB
+  allocs estimate:  53
+  --------------
+  minimum time:     2.169 μs (0.00% GC)
+  median time:      2.570 μs (0.00% GC)
+  mean time:        3.296 μs (16.03% GC)
+  maximum time:     1.195 ms (99.71% GC)
+  --------------
+  samples:          10000
+  evals/sample:     9
+
+julia> @benchmark delete_min(tree4)
+BenchmarkTools.Trial:
+  memory estimate:  1.88 KiB
+  allocs estimate:  77
+  --------------
+  minimum time:     3.282 μs (0.00% GC)
+  median time:      3.925 μs (0.00% GC)
+  mean time:        4.817 μs (15.15% GC)
+  maximum time:     1.374 ms (99.64% GC)
+  --------------
+  samples:          10000
+  evals/sample:     8
+
+julia> @benchmark delete_min(tree5)
+BenchmarkTools.Trial:
+  memory estimate:  2.08 KiB
+  allocs estimate:  85
+  --------------
+  minimum time:     3.523 μs (0.00% GC)
+  median time:      4.091 μs (0.00% GC)
+  mean time:        5.260 μs (16.72% GC)
+  maximum time:     1.431 ms (99.55% GC)
+  --------------
+  samples:          10000
+  evals/sample:     8
 ```

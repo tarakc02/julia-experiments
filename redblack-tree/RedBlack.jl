@@ -1,6 +1,6 @@
 module RedBlack
 
-export Tree, RB, E, insert, contains, show, size, minimum, maximum, between
+export Tree, RB, E, insert, contains, show, size, minimum, maximum, between, delete_min
 
 abstract type Tree{T} end
 abstract type RB{T} <: Tree{T} end
@@ -20,6 +20,7 @@ is_empty(::NonEmpty{T, C}) where {T, C} = false
 
 include("contains.jl")
 include("insert.jl")
+include("delmin.jl")
 include("range-ops.jl")
 include("helpers.jl")
 

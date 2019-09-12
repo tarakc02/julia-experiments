@@ -9,7 +9,7 @@ function is_balanced(t::NonEmpty{T, C}) where {T, C}
     black_height(t.left) == black_height(t.right)
 end
 
-black_height(::E{T}) where {T} = 1
+black_height(::E{T}) where {T} = 0
 
 function black_height(t::NonEmpty{T, true}) where {T} 
     bhl = black_height(t.left)
@@ -67,33 +67,39 @@ function rand_tree(size)
 end
 
 @testset "insert elements" begin
-    inorder = array2tree(collect(1:5))
-    backward = array2tree(reverse(collect(1:5)))
-    random = rand_tree(10)
+    inorder = array2tree(collect(1:100))
+    backward = array2tree(reverse(collect(1:100)))
+    random = rand_tree(100)
 
-    @test size(inorder) == 5
-    @test size(backward) == 5
-    @test size(random) == 10
+    @test size(inorder) == 100
+    @test size(backward) == 100
+    @test size(random) == 100
 
     @test contains(inorder, 1)
     @test contains(inorder, 2)
     @test contains(inorder, 3)
     @test contains(inorder, 4)
     @test contains(inorder, 5)
+    @test contains(inorder, 59)
+    @test contains(inorder, 93)
+    @test contains(inorder, 100)
 
     @test contains(backward, 1)
     @test contains(backward, 2)
     @test contains(backward, 3)
     @test contains(backward, 4)
     @test contains(backward, 5)
+    @test contains(backward, 59)
+    @test contains(backward, 93)
+    @test contains(backward, 100)
 
-    inorder2 = insert(inorder, 6)
-    @test !contains(inorder, 6)
-    @test contains(inorder2, 6)
+    inorder2 = insert(inorder, 101)
+    @test !contains(inorder, 101)
+    @test contains(inorder2, 101)
 
-    backward2 = insert(backward, 6)
-    @test !contains(backward, 6)
-    @test contains(backward2, 6)
+    backward2 = insert(backward, 101)
+    @test !contains(backward, 101)
+    @test contains(backward2, 101)
 end
 
 @testset "range operators" begin
@@ -105,9 +111,9 @@ end
 end
 
 @testset "maintain ordering" begin
-    inorder = array2tree(collect(1:10))
-    backward = array2tree(reverse(collect(1:10)))
-    random = rand_tree(10)
+    inorder = array2tree(collect(1:100))
+    backward = array2tree(reverse(collect(1:100)))
+    random = rand_tree(1000)
 
     @test is_bst(inorder)
     @test is_bst(backward)
@@ -115,9 +121,9 @@ end
 end
 
 @testset "maintain black balance" begin
-    inorder = array2tree(collect(1:10))
-    backward = array2tree(reverse(collect(1:10)))
-    random = rand_tree(10)
+    inorder = array2tree(collect(1:100))
+    backward = array2tree(reverse(collect(1:100)))
+    random = rand_tree(1000)
 
     @test is_balanced(inorder)
     @test is_balanced(backward)
@@ -125,13 +131,52 @@ end
 end
 
 @testset "no red-red violations" begin
-    inorder = array2tree(collect(1:10))
-    backward = array2tree(reverse(collect(1:10)))
-    random = rand_tree(10)
+    inorder = array2tree(collect(1:100))
+    backward = array2tree(reverse(collect(1:100)))
+    random = rand_tree(1000)
 
     @test is_redblack(inorder)
     @test is_redblack(backward)
     @test is_redblack(random)
+end
+
+@testset "delete-min preserves invariants" begin
+    inorder = array2tree(collect(1:100))
+    backward = array2tree(reverse(collect(1:100)))
+    random = rand_tree(1000)
+
+    function test_del(tree)
+        m = minimum(tree)
+        t = delete_min(tree)
+
+        while !is_empty(t)
+            @test !contains(t, m)
+            @test  contains(tree, m)
+            @test is_redblack(t)
+            @test is_bst(t)
+            @test is_balanced(t)
+            m = minimum(t)
+            t = delete_min(t)
+        end
+    end
+
+
+    function find_problem(tree)
+        t = tree
+        while !is_empty(t)
+            t_new = delete_min(t);
+            try
+                is_balanced(t_new)
+            catch 
+                return t
+            end
+            t = t_new;
+        end
+    end
+
+    test_del(inorder)
+    test_del(backward)
+    test_del(random)
 end
 
 end
