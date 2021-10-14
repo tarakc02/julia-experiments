@@ -3,30 +3,30 @@ module RedBlackTests
 using Test
 include("RedBlack.jl")
 using .RedBlack
-import .RedBlack.NonEmpty, .RedBlack.is_empty, .RedBlack.size
+import .RedBlack.Red, .RedBlack.Black, .RedBlack.NE, .RedBlack.is_empty, .RedBlack.size
 
-function is_balanced(t::NonEmpty{T, C}) where {T, C}
+function is_balanced(t::NE)
     black_height(t.left) == black_height(t.right)
 end
 
 black_height(::E{T}) where {T} = 0
 
-function black_height(t::NonEmpty{T, true}) where {T} 
+function black_height(t::Red)
     bhl = black_height(t.left)
     bhr = black_height(t.right)
     bhl == bhr || throw("unbalanced subtree")
     return bhl
 end
 
-function black_height(t::NonEmpty{T, false}) where {T}
+function black_height(t::NE)
     bhl = black_height(t.left)
     bhr = black_height(t.right)
     bhl == bhr || throw("unbalanced subtree")
     return 1 + bhl
 end
 
-is_bst(::E{T}) where {T} = true
-function is_bst(t::RB{T}) where {T}
+is_bst(::E) = true
+function is_bst(t::RB)
     is_bst(t.left) || return false
     is_bst(t.right) || return false
     !is_empty(t.left) && t.left.key >= t.key && return false
@@ -34,19 +34,19 @@ function is_bst(t::RB{T}) where {T}
     return true
 end
 
-is_redblack(::E{T}) where{T} = true
+is_redblack(::E) = true
 
-is_black(::E{T}) where {T} = true
-is_black(::NonEmpty{T, false}) where {T} = true
-is_black(::NonEmpty{T, true}) where {T} = false
+is_black(::E) = true
+is_black(::Black) = true
+is_black(::Red) = false
 
-function is_redblack(t::NonEmpty{T, true}) where {T}
+function is_redblack(t::Red)
     is_black(t.left)  || return false
     is_black(t.right) || return false
     is_redblack(t.left) && is_redblack(t.right)
 end
 
-function is_redblack(t::NonEmpty{T, false}) where {T}
+function is_redblack(t::Black)
     is_redblack(t.left) && is_redblack(t.right)
 end
 

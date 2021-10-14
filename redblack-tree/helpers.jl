@@ -1,5 +1,5 @@
-Base.size(::E{T}) where {T} = 0
-Base.size(t::NonEmpty{T}) where {T} = 1 + size(t.left) + size(t.right)
+Base.size(::E) = 0
+Base.size(t::NE) = 1 + size(t.left) + size(t.right)
 
 # for convenience, a very basic print method
 import Base.string

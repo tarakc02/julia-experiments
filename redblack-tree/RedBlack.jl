@@ -8,15 +8,21 @@ abstract type RB{T} <: Tree{T} end
 # A tree is either an empty tree, or a key with left and right sub-trees
 struct E{T} <: RB{T} end
 
-struct NonEmpty{T, C} <: RB{T}
+struct NE{T, C} <: RB{T} where {C <: Bool}
     key::T
-    left::RB{T}
-    right::RB{T}
+    left::Union{E{T}, NE{T, :red}, NE{T, :black}}
+    right::Union{E{T}, NE{T, :red}, NE{T, :black}}
 end
+
+Black{T} = NE{T, :black} where {T}
+Red{T} = NE{T, :red} where {T}
+
+Red(key::T, left::Union{E{T}, Black{T}}, right::Union{E{T}, Black{T}}) where {T} = NE{T, :red}(key, left, right)
+Black(key::T, left::Union{E{T}, NE{T}}, right::Union{E{T}, NE{T}}) where {T} = NE{T, :black}(key, left, right)
 
 # convenience:
 is_empty(::E{T}) where {T} = true
-is_empty(::NonEmpty{T, C}) where {T, C} = false
+is_empty(::NE{T}) where {T} = false
 
 include("contains.jl")
 include("insert.jl")

@@ -1,4 +1,8 @@
-function delmin(t::NonEmpty{T, true}) where {T}
+is_red(::E) = false
+is_red(tree::Red) = true
+is_red(tree::Black) = false
+
+function delmin(t::Red{T}) where {T}
     is_empty(t.left) && return t.right
     if is_empty(t.left.left) && is_red(t.left.right)
         return Red(t.key,
@@ -38,7 +42,7 @@ function delmin(t::NonEmpty{T, true}) where {T}
     end
 end
 
-function delete_min(t::NonEmpty{T, false}) where {T}
+function delete_min(t::Black{T}) where {T}
     if is_empty(t.left)
         is_empty(t.right) && return E{T}()
         return turn_black(t.right)
