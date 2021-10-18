@@ -15,6 +15,14 @@ function randstring_tree(size)
     return tree
 end
 
+function randint_tree(size)
+    tree = E{Int64}()
+    for i in 1:size
+        x = rand(Int64)
+        tree = insert(tree, x)
+    end
+    return tree
+end
 
 function randstring_set(size)
     set = SortedSet{String}()
@@ -75,34 +83,41 @@ Base.summarysize((tree, tree2)) - Base.summarysize(tree2)
 @benchmark insert(tree, x) setup=(tree = randstring_tree(4); x=randstring("AB", 80))
 
 @benchmark insert(tree, x) setup=(tree = randstring_tree(128); x=randstring("AB", 80))
-# alloc: 192 bytes, time: 433ns (min 150)
 @benchmark insert(tree, x) setup=(tree = randstring_tree(256); x=randstring("AB", 80))
-# alloc: 224 bytes, time:489ns (min 188)
 @benchmark insert(tree, x) setup=(tree = randstring_tree(512); x=randstring("AB", 80))
-# predicted alloc: 262 bytes, time: 560ns
-# actual alloc: 256 bytes, time: 551ns
 @benchmark insert(tree, x) setup=(tree = randstring_tree(1024); x=randstring("AB", 80))
-# predicted alloc: 294 bytes, time: 634ns
-# actual alloc: 288 bytes, time: 645ns
+
+# to compare to original benchmarks
+@benchmark insert(tree, x) setup=(tree = randint_tree(100_000); x=rand(Int64))
+
 @benchmark insert(tree, x) setup=(tree = randstring_tree(4096); x=randstring("AB", 80))
+@benchmark insert!(set, x) setup=(set = randstring_set(4096); x=randstring("AB", 80))
 
-const bigtree = randstring_tree(1_000_000);
-@benchmark insert($bigtree, x) setup=(x=randstring("AB", 80))
+@benchmark insert(tree, x) setup=(tree = randstring_tree(25_000); x=randstring("AB", 80))
+@benchmark insert!(set, x) setup=(set = randstring_set(25_000); x=randstring("AB", 80))
+
+@benchmark insert(tree, x) setup=(tree = randstring_tree(100_000); x=randstring("AB", 80))
+@benchmark insert!(set, x) setup=(set = randstring_set(100_000); x=randstring("AB", 80))
+
+#const bigtree = randstring_tree(1_000_000);
+const bigtree = randint_tree(1_000_000);
+
+# record: 
+@time test = randint_tree(10_000_000);
+@time const test2 = randint_tree(10_000_000);
+@benchmark insert($test, x) setup=(x=rand(Int64))
+@benchmark insert($test2, x) setup=(x=rand(Int64))
+#@benchmark insert($bigtree, x) setup=(x=randstring("AB", 80))
+@benchmark insert($bigtree, x) setup=(x=rand(Int64))
 
 
 
 
 
-# as of 17-Oct, this has min=109ns, median=152ns, mean=155ns, sd=25ns
 @benchmark contains(tree, x) setup=(tree = randstring_tree(10_000); x=randstring("AB", 80))
-# 4.7ns to compare random pairs of string keys
-5 .+ log2(10_000) * 5, 2*log2(10_000) * 5
-
-4.7 + log2(25000) * 4.7, 4.7 + 2*log2(25000) * 4.7
-@benchmark contains(tree, x) setup=(tree = randstring_tree(25000); x=randstring("AB", 80))
-
-@benchmark first(set) setup=(set=randstring_set(10_000))
-@benchmark minimum(tree) setup=(tree=randstring_tree(10_000))
+@benchmark x in set setup=(set = randstring_set(10_000); x=randstring("AB", 80))
+@benchmark first(set) setup=(set=randstring_set(100_000))
+@benchmark minimum(tree) setup=(tree=randstring_tree(100_000))
 @benchmark RedBlack.minimum2($tree1)
 
 @benchmark insert($tree1, x) setup=(x=randstring("ABCD", 40))

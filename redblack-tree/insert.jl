@@ -2,26 +2,17 @@
 # vim: set fdm=marker fmr={{{,}}} fdl=0 foldcolumn=4:
 
 # during insertion, temporarily allow a single red-red violation {{{
-struct RedViolL{T}
-    key::T
-    left::Red{T}
-    right::Union{E{T}, Black{T}}
-end
-
-struct RedViolR{T}
-    key::T
-    left::Union{E{T}, Black{T}}
-    right::Red{T}
-end
+RedViolL{T} = NE{T, :RVL} where {T}
+RedViolR{T} = NE{T, :RVR} where {T}
 
 RedViol{T} = Union{RedViolL{T}, RedViolR{T}} where {T}
 
 function Red(key::T, left::Red{T}, right::Union{E{T}, Black{T}}) where {T}
-    RedViolL(key, left, right)
+    RedViolL{T}(key, left, right)
 end
 
 function Red(key::T, left::Union{E{T}, Black{T}}, right::Red{T}) where {T}
-    RedViolR(key, left, right)
+    RedViolR{T}(key, left, right)
 end
 
 # convenience function -- returns a copy of a tree, but root painted black
