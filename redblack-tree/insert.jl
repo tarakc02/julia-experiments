@@ -39,6 +39,7 @@ function insert(tree::RB{T}, key::T) where {T}
     turn_black(res)
 end
 
+# recursion dispatches on color of node {{{
 ins(::E{T}, key::T) where {T} = Red(key, E{T}(), E{T}())
 function ins(t::Red{T}, key::T) where {T}
     key < t.key && return Red(t.key, ins(t.left, key), t.right)
@@ -50,7 +51,9 @@ function ins(t::Black{T}, key::T) where {T}
     key > t.key && return balance(t.key, t.left, ins(t.right, key))
     return t
 end
+# }}}
 
+# balance red-red violations by case {{{
 balance(key::T, left::RB{T}, right::RB{T}) where {T} = Black(key, left, right)
 
 function balance(key::T, left::RedViolL{T}, right::RB{T}) where {T}
@@ -76,5 +79,6 @@ function balance(key::T, left::RB{T}, right::RedViolR{T}) where {T}
     z = turn_black(right.right)
     Red(right.key, x, z)
 end
+# }}}
 
 # done.
