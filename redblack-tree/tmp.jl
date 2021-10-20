@@ -34,6 +34,12 @@ function randstring_set(size)
 end
 # }}}
 
+tree = randstring_tree(10_00);
+dm1 = delete_min(tree) |> delete_min;
+dm2 = RedBlack.delete_min2(tree) |> delete_min;
+
+all([contains(dm2, x) for x in between(dm1, "", "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ")])
+
 tree = randstring_tree(100);
 treea = insert(tree, randstring("AB", 80));
 Base.summarysize(tree)
@@ -57,8 +63,8 @@ set = randstring_set(1_000);
 
 # }}}
 
-@benchmark contains(tree, x) setup=(tree = randstring_tree(1000); x=randstring("AB", 80))
-@benchmark x in set setup=(set = randstring_set(1000); x=randstring("AB", 80))
+@benchmark contains(tree, x) setup=(tree = randstring_tree(100_000); x=randstring("AB", 80))
+@benchmark x in set setup=(set = randstring_set(100_000); x=randstring("AB", 80))
 
 
 @benchmark contains(tree, x) setup=(tree = randstring_tree(256); x=randstring("AB", 80))
@@ -103,16 +109,24 @@ Base.summarysize((tree, tree2)) - Base.summarysize(tree2)
 const bigtree = randint_tree(1_000_000);
 
 # record: 
-@time test = randint_tree(10_000_000);
-@time const test2 = randint_tree(10_000_000);
-@benchmark insert($test, x) setup=(x=rand(Int64))
-@benchmark insert($test2, x) setup=(x=rand(Int64))
-#@benchmark insert($bigtree, x) setup=(x=randstring("AB", 80))
-@benchmark insert($bigtree, x) setup=(x=rand(Int64))
+@time const test = randstring_tree(10_000_000);
+@time settest = randstring_set(10_000_000)
 
+@benchmark insert($test, x) setup=(x=randstring("AB", 80))
+@benchmark delete_min($test)
+#@benchmark insert!($settest, x) setup=(x=randstring("AB", 80))
 
+@benchmark contains($test, x) setup=(x=randstring("AB", 80))
+@benchmark x in $settest setup=(x=randstring("AB", 80))
 
+@benchmark minimum($test)
+@benchmark first($settest)
 
+@benchmark delete_min(tree) setup=(tree=randstring_tree(1_000))
+@benchmark delete_min(tree) setup=(tree=randstring_tree(10_000))
+
+tree = randstring_tree(25);
+RedBlack.delete_min2(tree)
 
 @benchmark contains(tree, x) setup=(tree = randstring_tree(10_000); x=randstring("AB", 80))
 @benchmark x in set setup=(set = randstring_set(10_000); x=randstring("AB", 80))

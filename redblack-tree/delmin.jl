@@ -1,58 +1,78 @@
 # vim: set ts=4 sts=0 sw=4 si fenc=utf-8 et:
 # vim: set fdm=marker fmr={{{,}}} fdl=0 foldcolumn=4:
 
-function delmin(key::T, left::RB{T}, right::RB{T}) where {T}
-    is_empty(left) && return right
-    if is_empty(left.left) && is_red(left.right)
-        return Red(key,
-                   Black(left.right.key, E{T}(), E{T}()),
-                   right)
-    elseif is_empty(left.left) && is_empty(right.left)
-        b = Red(key, E{T}(), E{T}())
-        return Black(right.key, b, right.right)
-    elseif is_empty(left.left) && is_red(right.left)
-        b = Black(key, left.right, E{T}())
-        d = Black(right.key, E{T}(), right.right)
-        return Red(right.left.key, b, d)
-    elseif is_red(left.left)
-        a = delmin(left.left.key, left.left.left, left.left.right)
-        b = Black(left.key, a, left.right)
-        return Red(key, b, right)
-    elseif is_red(right.left) && !is_red(left.right)
-        a = delmin(left.key, turn_black(left.left), turn_black(left.right))
-        b = Black(key, a, right.left.left)
-        d = Black(right.key, right.left.right, right.right)
-        return Red(right.left.key, b, d)
-    elseif !is_red(left.right)
-        b = delmin(left.key, left.left, left.right)
-        if is_red(b) return Red(key, turn_black(b), right) end
-        d = Red(key, b, right.left)
-        return Black(right.key, d, right.right)
+struct HeightViol{T}
+    node::Union{Black{T}, E{T}}
+end
+
+wrap(right::E{T}) where {T} = HeightViol{T}(right)
+wrap(right::Red{T}) where {T} = turn_black(right)
+
+# helpers {{{
+turn_black(t::E{T}) where {T} = t
+turn_black(t::HeightViol{T}) where {T} = turn_black(t.node)
+
+turn_red(t::Black{T}) where {T} = Red(t.key, t.left, t.right)
+# }}}
+
+# `fixup` dispatches based on presence of height-balance violations (2 versions)
+
+# fixup_black: {{{
+
+# no fixes necessary, copy only
+function fixup_black(key, left::RB{T}, right::RB{T}) where {T}
+    Black(key, left, right)
+end
+
+# special cases:
+function fixup_black(key::T, left::HeightViol{T}, right::Red{T}) where {T}
+    Black(right.key,
+          balance(right.left.key,
+                  Red(key, turn_black(left), right.left.left),
+                  right.left.right),
+          right.right)
+end
+
+function fixup_black(key::T, left::HeightViol{T}, right::Black{T}) where {T}
+    if is_red(right.right)
+        return Black(right.key,
+                     Black(key, turn_black(left), right.left),
+                     turn_black(right.right))
+    elseif is_red(right.left)
+        return Black(right.left.key,
+                     Black(key, turn_black(left), right.left.left),
+                     Black(right.key, right.left.right, right.right))
     else
-        b = delmin(left.key,
-                    left.left,
-                    left.right.left)
-        d = Black(left.right.key,
-                  b,
-                  left.right.right)
-        return Red(key, d, right)
+        return HeightViol{T}(balance(key, turn_black(left), turn_red(right)))
     end
 end
+# }}}
 
-function delete_min(t::Black{T}) where {T}
-    if is_empty(t.left)
-        is_empty(t.right) && return E{T}()
-        return turn_black(t.right)
-    end
-
-    is_red(t.left) && return Black(t.key, delmin(t.left.key, t.left.left, t.left.right), t.right)
-
-    if !is_red(t.right)
-        res = delmin(t.key, t.left, t.right)
-        return turn_black(res)
-    end
-
-    return Black(t.right.key,
-                 delmin(t.key, t.left, t.right.left),
-                 t.right.right)
+# and fixup red {{{
+function fixup_red(
+        key::T,
+        left::Union{Black{T}, E{T}},
+        right::Union{Black{T}, E{T}}) where {T}
+    Red(key, left, right)
 end
+
+function fixup_red(key, left::HeightViol{T}, right::Black{T}) where {T}
+    balance(right.key, Red(key, turn_black(left), right.left), right.right)
+end
+# }}}
+
+function dm(node::Red{T}) where {T}
+    is_empty(node.left) && return node.right
+    fixup_red(node.key, dm(node.left), node.right)
+end
+
+function dm(node::Black{T}) where {T}
+    is_empty(node.left) && return wrap(node.right)
+    fixup_black(node.key, dm(node.left), node.right)
+end
+
+function delete_min(root::Black{T}) where {T}
+    res = dm(root)
+    turn_black(res)
+end
+
