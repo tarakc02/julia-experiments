@@ -179,4 +179,17 @@ end
     test_del(random)
 end
 
+@testset "iteration" begin
+    function nattree(n)
+        tree = E{Int64}()
+        for element in 1:n
+            tree = insert(tree, element)
+        end
+        return tree
+    end
+
+    test = nattree(100);
+    @test all([x for x in test] .== 1:100)
+end
+
 end

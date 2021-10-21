@@ -1,6 +1,6 @@
 module RedBlack
 
-export Tree, RB, E, insert, contains, show, size, minimum, maximum, between, delete_min
+export Tree, RB, E, insert, contains, show, size, minimum, maximum, between, delete_min, iterate
 
 abstract type Tree{T} end
 abstract type RB{T} <: Tree{T} end
@@ -33,5 +33,6 @@ include("insert.jl")
 include("delmin.jl")
 include("range-ops.jl")
 include("helpers.jl")
+include("iter.jl")
 
 end
