@@ -138,3 +138,16 @@ RedBlack.delete_min2(tree)
 @benchmark delete_min($tree1)
 @benchmark delete_min2($tree1)
 
+
+### iteration
+#
+
+@benchmark iterate(x) setup=(x=randstring_tree(1_000))
+@benchmark iterate(x, state) setup=(x = randstring_tree(1_000); (min, state) = iterate(x))
+
+@benchmark minimum(x) setup=(x=randstring_tree(1_000))
+@benchmark insert(tree, x) setup=(tree = randstring_tree(1_000); x=randstring("AB", 80))
+
+@benchmark minimum(x) setup=(x=randstring_tree(10_000))
+@benchmark iterate(x) setup=(x=randstring_tree(10_000))
+@benchmark insert(tree, x) setup=(tree = randstring_tree(10_000); x=randstring("AB", 80))
